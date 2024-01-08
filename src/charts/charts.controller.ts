@@ -11,9 +11,15 @@ import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 export class ChartsController {
   constructor(private readonly chartsService: ChartsService) { }
 
+  @Get('get/:id')
+  getChartsContract(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.chartsService.getChartsContract(id);
+  }
 
   @Get('get/genders/:id')
-  getChartsContract(
+  getChartsGenderContract(
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.chartsService.getChartsGenderContract(id);

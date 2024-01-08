@@ -6,6 +6,13 @@ export class ChartsService {
 
     constructor(private readonly prisma: PrismaService) { }
 
+    async getChartsContract(codigo: string) {
+        var [genders, contrations] = await Promise.all([
+            this.getChartsGenderContract(codigo),
+            this.getChartsContrationContract(codigo),
+        ]);
+        return { genders, contrations };
+    }
     async getChartsGenderContract(codigo: string) {
         const contract = await this.prisma.mar_ctr_contratos.findFirst({
             where: {
