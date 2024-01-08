@@ -177,8 +177,9 @@ model mar_his_historial {
   his_codigo         String             @id(map: "mar_his_pk") @default(uuid())
   his_hora_entrada   DateTime?
   his_hora_salida    DateTime?
-  his_tp_trabajado   String            
-  his_tp_extra       String            
+  his_tp_trabajado   String
+  his_tp_extra       String
+  // his_feccreacion    DateTime          @default(now()) @db.Date()
   emp_estado         Estado             @default(ACTIVE)
   his_feccrea        DateTime           @default(now())
   his_fecmod         DateTime           @default(now()) @db.Timestamptz()

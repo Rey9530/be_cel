@@ -225,3 +225,114 @@ ALTER TABLE "mar_asi_asignacion" ADD CONSTRAINT "mar_asi_emp_fk" FOREIGN KEY ("a
 
 -- AddForeignKey
 ALTER TABLE "mar_his_historial" ADD CONSTRAINT "mar_his_asi_fk" FOREIGN KEY ("his_codasi") REFERENCES "mar_asi_asignacion"("asi_codigo") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+
+
+COMMENT ON TABLE mar_dia_dias IS 'Listado de dias de la semana.';
+COMMENT ON COLUMN mar_dia_dias.dia_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_dia_dias.dia_nombre IS 'Nombre del dia';
+COMMENT ON COLUMN mar_dia_dias.dia_dia_codigo IS 'Codigo del dia que va de 0 a 6';
+COMMENT ON COLUMN mar_dia_dias.dia_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_dia_dias.dia_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_dia_dias.dia_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_dia_dias.dia_usrcrea IS 'Usuario que creo el registro';
+
+
+COMMENT ON TABLE mar_emp_empleados IS 'Tabla que almacenara el listado de empleado';
+COMMENT ON COLUMN mar_emp_empleados.emp_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_emp_empleados.emp_codigo_emp IS 'Codigo del empleado';
+COMMENT ON COLUMN mar_emp_empleados.emp_fecha_nacimiento IS 'Fecha de nacimiento del empleado';
+COMMENT ON COLUMN mar_emp_empleados.emp_nombres IS 'Nombres del empleado';
+COMMENT ON COLUMN mar_emp_empleados.emp_apellidos IS 'Apellidos del empleado';
+COMMENT ON COLUMN mar_emp_empleados.emp_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_emp_empleados.emp_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_emp_empleados.emp_usrcrea IS 'Usuario que creo el registro';
+COMMENT ON COLUMN mar_emp_empleados.emp_usrmod IS 'Ultimo usuario que actualizo el registro';
+COMMENT ON COLUMN mar_emp_empleados.emp_codgen IS 'Id del genero asociado';
+COMMENT ON COLUMN mar_emp_empleados.emp_codemp IS 'id del codigo de la empresa';
+COMMENT ON COLUMN mar_emp_empleados.emp_codubi IS 'Id de la sede asignada';
+COMMENT ON COLUMN mar_emp_empleados.emp_codcon IS 'Id del tipo de contratacion';
+
+
+
+COMMENT ON COLUMN mar_epr_empresas.epr_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON TABLE mar_epr_empresas IS 'Esta tabla almacenara las empresas a las que se les puede asignar contratos';
+COMMENT ON COLUMN mar_epr_empresas.epr_nombre IS 'Nombre de la empresa';
+COMMENT ON COLUMN mar_epr_empresas.epr_direccion IS 'Direccion de la empresa';
+COMMENT ON COLUMN mar_epr_empresas.epr_contacto_nombre IS 'Nombre del contacto de la empresa';
+COMMENT ON COLUMN mar_epr_empresas.epr_contacto_correo IS 'Correo del contacto de la empresa';
+COMMENT ON COLUMN mar_epr_empresas.epr_contacto_telefono IS 'Telefono del contacto de la empresa';
+COMMENT ON COLUMN mar_epr_empresas.epr_usrcrea IS 'Usuario que creo el registro';
+COMMENT ON COLUMN mar_epr_empresas.epr_usrmod IS 'Ultimo usuario que actualizo el registro';
+COMMENT ON COLUMN mar_epr_empresas.epr_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_epr_empresas.epr_fecmod IS 'Fecha de ultima actualizacion del registro';
+
+
+COMMENT ON TABLE mar_gen_generos IS 'Tabla almacena los generos que puede tener un empleado';
+COMMENT ON COLUMN mar_gen_generos.gen_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_gen_generos.gen_nombre IS 'Nombre del genero';
+COMMENT ON COLUMN mar_gen_generos.gen_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_gen_generos.gen_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_gen_generos.gen_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_gen_generos.gen_usrcrea IS 'Usuario que creo el registro';
+
+
+COMMENT ON TABLE mar_hde_detalle_ho IS 'Tabla que almacena el detalle de los horarios a asignar a los empleados';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_codhor IS 'Codigo del horario padrea';
+-- COMMENT ON COLUMN mar_hde_detalle_ho.hor_coddia IS 'Codigo del dia que esta configurado este horario';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_inicio_1 IS 'Hora de inicio de la parte 1 del horario';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_fin_1 IS 'Hora de fin de la parte 1 del horario';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_inicio_2 IS 'Hora de inicio de la parte 2 del horario';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_fin_2 IS 'Hora de fin de la parte 2 del horario';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_fecmod IS 'Fecha de ultima actualizacion del regist';
+COMMENT ON COLUMN mar_hde_detalle_ho.hde_usrcrea IS 'Usuario que creo el registro';
+
+
+COMMENT ON TABLE mar_his_historial IS 'Esta tabla almacena el historial de marcaciones de los empleados';
+COMMENT ON COLUMN mar_his_historial.his_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_his_historial.his_hora_entrada IS 'Hora que se marco la entrada';
+COMMENT ON COLUMN mar_his_historial.his_hora_salida IS 'Hora que se marco la salida';
+COMMENT ON COLUMN mar_his_historial.his_tp_trabajado IS 'Horas trabajadas';
+COMMENT ON COLUMN mar_his_historial.his_tp_extra IS 'Horas extras realizadas';
+COMMENT ON COLUMN mar_his_historial.emp_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_his_historial.his_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_his_historial.his_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_his_historial.his_usrcrea IS 'Usuario que creo el registro';
+COMMENT ON COLUMN mar_his_historial.his_usrmod IS 'Ultimo usuario que actualizo el registro';
+COMMENT ON COLUMN mar_his_historial.his_codasi IS 'Id de la asignacion que le pertenecen el historial';
+
+
+COMMENT ON TABLE mar_hor_horarios IS 'Tabla padre que sera el que se relacione con los empleados en las asignaciones';
+COMMENT ON COLUMN mar_hor_horarios.hor_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_hor_horarios.hor_nombre IS 'Nombre del horario';
+COMMENT ON COLUMN mar_hor_horarios.hor_codctro IS 'Id del contrato al que pertenece este horario';
+COMMENT ON COLUMN mar_hor_horarios.hor_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_hor_horarios.hor_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_hor_horarios.hor_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_hor_horarios.hor_usrcrea IS 'Usuario que creo el registro';
+
+
+COMMENT ON TABLE mar_ubi_ubicaciones IS 'Aqui se almacenaran el listado de sedes, a las cuales se puden asignar los empleados';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_nombre IS 'Nombre de la sede o ubicacion';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_usrcrea IS 'Usuario que creo el registro';
+COMMENT ON COLUMN mar_ubi_ubicaciones.ubi_usrmod IS 'Ultimo usuario que actualizo el registro';
+
+
+COMMENT ON TABLE mar_usr_usuario IS 'Tabla que almacenara los usuarios que pueden acceder al sistema';
+COMMENT ON COLUMN mar_usr_usuario.usr_codigo IS 'Id o llave primaria de la tabla';
+COMMENT ON COLUMN mar_usr_usuario.usr_codigo_emple IS 'Codigo del usuario (Codigo empleado)';
+COMMENT ON COLUMN mar_usr_usuario.usr_nombres IS 'Nombres del usuario';
+COMMENT ON COLUMN mar_usr_usuario.usr_apellidos IS 'Apellidos del usuario';
+COMMENT ON COLUMN mar_usr_usuario.usr_contrasenia IS 'Contrasena o clave del usuario, para acceder al sistema';
+COMMENT ON COLUMN mar_usr_usuario.usr_estado IS 'Estado del registro esto por temas de eliminacion para que sea logica';
+COMMENT ON COLUMN mar_usr_usuario.usr_feccrea IS 'Fecha de creacion del registro';
+COMMENT ON COLUMN mar_usr_usuario.usr_fecmod IS 'Fecha de ultima actualizacion del registro';
+COMMENT ON COLUMN mar_usr_usuario.usr_usrcrea IS 'Usuario que creo el registro';

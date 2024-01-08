@@ -2,24 +2,24 @@
 version: '3.1'
 
 services:  
-  nestjsapp:
-    depends_on:
-      - db-facial
-    # build: 
-    #   context: .
-    #   dockerfile: Dockerfile
-    #image: nestjs-docker
-    image: localhost/marcacion-backend
-    container_name: nestjsapp
-    restart: always # reiniciar el contenedor si se detiene
-    ports:
-      - "${PORT}:${PORT}"  
-    env_file: .env
-    networks:
-      - network-mar 
-    volumes: 
-      - volumen_db:/usr/src/app/uploads
-      - volumen_db_temp:/usr/src/app/uploads_temp 
+  # nestjsapp:
+  #   depends_on:
+  #     - db-facial
+  #   # build: 
+  #   #   context: .
+  #   #   dockerfile: Dockerfile
+  #   #image: nestjs-docker
+  #   image: localhost/marcacion-backend
+  #   container_name: nestjsapp
+  #   restart: always # reiniciar el contenedor si se detiene
+  #   ports:
+  #     - "${PORT}:${PORT}"  
+  #   env_file: .env
+  #   networks:
+  #     - network-mar 
+  #   volumes: 
+  #     - volumen_db:/usr/src/app/uploads
+  #     - volumen_db_temp:/usr/src/app/uploads_temp 
     
 
   db-facial:
