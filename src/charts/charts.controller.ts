@@ -18,17 +18,17 @@ export class ChartsController {
     return this.chartsService.getChartsContract(id);
   }
 
-  @Get('get/genders/:id')
-  getChartsGenderContract(
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.chartsService.getChartsGenderContract(id);
-  }
+  // @Get('get/genders/:id')
+  // getChartsGenderContract(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  // ) {
+  //   return this.chartsService.getChartsGenderContract(id);
+  // }
 
-  @Get('get/contrations/:id')
-  getChartsContrationContract(
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.chartsService.getChartsContrationContract(id);
-  }
+  // @Get('get/contrations/:id')
+  // getChartsContrationContract(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  // ) {
+  //   return this.chartsService.getChartsContrationContract(id);
+  // }
 }

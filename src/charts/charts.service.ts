@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { mar_ctr_contratos } from '@prisma/client';
 import { PrismaService } from 'src/common/services';
 
 @Injectable()
@@ -7,23 +8,100 @@ export class ChartsService {
     constructor(private readonly prisma: PrismaService) { }
 
     async getChartsContract(codigo: string) {
-        var [genders, contrations] = await Promise.all([
-            this.getChartsGenderContract(codigo),
-            this.getChartsContrationContract(codigo),
-        ]);
-        return { genders, contrations };
-    }
-    async getChartsGenderContract(codigo: string) {
         const contract = await this.prisma.mar_ctr_contratos.findFirst({
             where: {
                 ctr_codigo: codigo,
                 ctr_estado: 'ACTIVE'
             }
         });
+        var [genders, contrations, extraHours, time] = await Promise.all([
+            this.getChartsGenderContract(contract),
+            this.getChartsContrationContract(contract),
+            this.getCountHourExtrContract(contract),
+            this.getCountLatesContract(contract),
+        ]);
+        return { genders, contrations, extraHours, time };
+    }
+
+    async getCountLatesContract(contract: mar_ctr_contratos) { 
+
+        const respDb = await this.prisma.mar_hor_horarios.findMany({
+            where: {
+                hor_estado: 'ACTIVE',
+                hor_codctro: contract.ctr_codigo,
+            },
+            include: {
+                mar_asi_asignacion: {
+                    where: {
+                        asi_estado: 'ACTIVE'
+                    },
+                    include: {
+                        mar_his_historial: {
+                            where: {
+                                emp_estado: 'ACTIVE'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        var inLate = 0;
+        var onTime = 0;
+        var total = 0;
+        for (let iHorarios = 0; iHorarios < respDb.length; iHorarios++) {
+            const horario = respDb[iHorarios];
+            for (let iAsignacion = 0; iAsignacion < horario.mar_asi_asignacion.length; iAsignacion++) {
+                const asig = horario.mar_asi_asignacion[iAsignacion];
+                for (let iHis = 0; iHis < asig.mar_his_historial.length; iHis++) {
+                    total++;
+                    const historial = asig.mar_his_historial[iHis];
+                    if (historial.his_entrada_tarde) {
+                        inLate++;
+                    } else {
+                        onTime++;
+                    }
+                }
+            }
+        }
+        return { inLate, onTime, total };
+    }
+    async getCountHourExtrContract(contract: mar_ctr_contratos) {
+        var respDb = await this.prisma.mar_hor_horarios.findMany({
+            where: {
+                hor_estado: 'ACTIVE',
+                hor_codctro: contract.ctr_codigo,
+            },
+            include: {
+                mar_asi_asignacion: {
+                    where: {
+                        asi_estado: 'ACTIVE'
+                    },
+                    include: {
+                        mar_his_historial: true
+                    }
+                }
+            }
+        });
+        var extraHours = 0;
+        for (let iHorarios = 0; iHorarios < respDb.length; iHorarios++) {
+            const horario = respDb[iHorarios];
+            for (let iAsignacion = 0; iAsignacion < horario.mar_asi_asignacion.length; iAsignacion++) {
+                const asig = horario.mar_asi_asignacion[iAsignacion];
+                for (let iHis = 0; iHis < asig.mar_his_historial.length; iHis++) {
+                    const historial = asig.mar_his_historial[iHis];
+                    extraHours = extraHours + parseInt(historial.his_tp_extra);
+                }
+            }
+
+        }
+        return { extraHours, extraHoursC: contract.ctr_horas_extras, };
+    }
+
+    async getChartsGenderContract(contract: mar_ctr_contratos) {
         if (!contract) throw new NotFoundException(`Regisro no encontrado`);
         const empleadosList = await this.prisma.mar_hor_horarios.findMany({
             where: {
-                hor_codctro: codigo,
+                hor_codctro: contract.ctr_codigo,
                 hor_estado: 'ACTIVE'
             },
             include: {
@@ -65,17 +143,11 @@ export class ChartsService {
     }
 
 
-    async getChartsContrationContract(codigo: string) {
-        const contract = await this.prisma.mar_ctr_contratos.findFirst({
-            where: {
-                ctr_codigo: codigo,
-                ctr_estado: 'ACTIVE'
-            }
-        });
+    async getChartsContrationContract(contract: mar_ctr_contratos) {
         if (!contract) throw new NotFoundException(`Regisro no encontrado`);
         const empleadosList = await this.prisma.mar_hor_horarios.findMany({
             where: {
-                hor_codctro: codigo,
+                hor_codctro: contract.ctr_codigo,
                 hor_estado: 'ACTIVE'
             },
         });

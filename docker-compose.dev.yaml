@@ -3,38 +3,44 @@ version: '3.1'
 
 services:  
   nestjsapp-dev:
-    depends_on:
-      - db-facial
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
-    image: nestjs-docker
+    # depends_on:
+    #   - db-facial
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile.dev
+    # image: nestjs-docker
+    image: "node:20.10.0-alpine"
+    user: "node"
     container_name: nestjsapp
     restart: always # reiniciar el contenedor si se detiene
     ports:
-      - "${PORT}:${PORT}"  
+      - "${PORT}:${PORT}"
     env_file: .env
+    environment:
+      - NODE_ENV=development
     networks:
       - network-mar 
+    working_dir: /usr/src/app
     volumes: 
-    #   - .:/usr/src/app
+      - ./:/usr/src/app
       - volumen_db:/usr/src/app/uploads
-      - volumen_db_temp:/usr/src/app/uploads_temp 
+      - volumen_db_temp:/usr/src/app/uploads_temp
+    command: "yarn start:dev"
     
-  db-facial:
-    image: postgres:15.2-alpine
-    container_name: ${DB_HOST}
-    restart: always
-    ports:
-      - 5435:5432
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USERNAME}
-      TZ: 'America/El_Salvador'
-      PGTZ: 'America/El_Salvador'
-    networks:
-      - network-mar
+  # db-facial:
+  #   image: postgres:15.2-alpine
+  #   container_name: ${DB_HOST}
+  #   restart: always
+  #   ports:
+  #     - 5435:5432
+  #   environment:
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_NAME}
+  #     POSTGRES_USER: ${DB_USERNAME}
+  #     TZ: 'America/El_Salvador'
+  #     PGTZ: 'America/El_Salvador'
+  #   networks:
+  #     - network-mar
 
 networks:
   network-mar:

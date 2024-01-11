@@ -47,7 +47,11 @@ export class MarkingsService {
                 his_feccrea: 'asc'
               }
             },
-            mar_emp_empleados: true
+            mar_emp_empleados: {
+              include: {
+                mar_ubi_ubicaciones: true
+              }
+            }
           }
         },
         mar_hde_detalle_ho: {
@@ -72,9 +76,12 @@ export class MarkingsService {
             id: asig.mar_emp_empleados.emp_codigo,
             fecha: hora.his_feccrea,
             entrada: hora.his_hora_entrada,
+            entrada_tardia: hora.his_entrada_tarde,
             salida: hora.his_hora_salida,
+            salida_temprana:hora.his_salida_temp,
             tiempo_extra: hora.his_tp_extra,
-            tiempo_trabajado: hora.his_tp_trabajado,
+            tiempo_trabajado: hora.his_tp_trabajado, 
+            sede: asig.mar_emp_empleados.mar_ubi_ubicaciones.ubi_nombre,
           }
           dataResp.push(registro);
         }
@@ -109,11 +116,11 @@ export class MarkingsService {
     worksheet.getCell('AG2').font = font;
     worksheet.getCell('AG2').alignment = { vertical: 'middle', horizontal: 'center' };
     worksheet.mergeCells('A3:AG3');
-    worksheet.getCell('AG3').value = 'Contrato: '+contrats.ctr_num_contrato;
+    worksheet.getCell('AG3').value = 'Contrato: ' + contrats.ctr_num_contrato;
     worksheet.getCell('AG3').font = font;
     worksheet.getCell('AG3').alignment = { vertical: 'middle', horizontal: 'center' };
     worksheet.mergeCells('A4:AG4');
-    worksheet.getCell('AG4').value = 'Control de asistencia diaria del personal correspondiente al período '+formatDateInSpanish(startDate)+'  al '+formatDateInSpanish(endDate);
+    worksheet.getCell('AG4').value = 'Control de asistencia diaria del personal correspondiente al período ' + formatDateInSpanish(startDate) + '  al ' + formatDateInSpanish(endDate);
     worksheet.getCell('AG4').font = font;
     worksheet.getCell('AG4').alignment = { vertical: 'middle', horizontal: 'center' };
     worksheet.mergeCells('A5:AG5');
@@ -204,7 +211,7 @@ export class MarkingsService {
         var dayDateEmp = convert_date(filterDTO.date_start, TimeType.Inicio);
         for (let ie = 3; ie <= daysSelect; ie++) {
           // Sumar los días 
-          row.getCell(ie).font = fontheader;
+          // row.getCell(ie).font = fontheader;
           row.getCell(ie).alignment = { vertical: 'middle', horizontal: 'center' };
 
           row.getCell(ie).border = {
@@ -219,11 +226,12 @@ export class MarkingsService {
             const histial = asig.mar_his_historial[iHistorial];
             var isCorrectDay = areDatesEqual(dayDateEmp, histial.his_feccrea);
             if (isCorrectDay) {
-              row.getCell(ie).fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: 'FF92D050' },
-              };
+              row.getCell(ie).value ='X';
+              // row.getCell(ie).fill = {
+              //   type: 'pattern',
+              //   pattern: 'solid',
+              //   fgColor: { argb: 'FF92D050' },
+              // };
               break;
             }
 
@@ -236,29 +244,29 @@ export class MarkingsService {
       }
 
 
-      worksheet.getCell('B' + (startRow+1)).value = "A: Asueto";
+      worksheet.getCell('B' + (startRow + 1)).value = "A: Asueto";
 
-      worksheet.getCell('B' + (startRow+1)).fill = {
+      worksheet.getCell('B' + (startRow + 1)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFFC000' },
       };
-      worksheet.getCell('B' + (startRow+2)).value = "D: Descanso";
-      worksheet.getCell('B' + (startRow+3)).value = "F: Falta (Sin permiso)";
-      worksheet.getCell('B' + (startRow+4)).value = "I: Incapacidad";
-      worksheet.getCell('B' + (startRow+4)).fill = {
+      worksheet.getCell('B' + (startRow + 2)).value = "D: Descanso";
+      worksheet.getCell('B' + (startRow + 3)).value = "F: Falta (Sin permiso)";
+      worksheet.getCell('B' + (startRow + 4)).value = "I: Incapacidad";
+      worksheet.getCell('B' + (startRow + 4)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFffff00' },
       };
-      worksheet.getCell('B' + (startRow+5)).value = "P: Permiso";
-      worksheet.getCell('B' + (startRow+5)).fill = {
+      worksheet.getCell('B' + (startRow + 5)).value = "P: Permiso";
+      worksheet.getCell('B' + (startRow + 5)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF92D050' },
       };
-      worksheet.getCell('B' + (startRow+6)).value = "V: Vacación";
-      worksheet.getCell('B' + (startRow+6)).value = "X: Asistencia";
+      worksheet.getCell('B' + (startRow + 6)).value = "V: Vacación";
+      worksheet.getCell('B' + (startRow + 6)).value = "X: Asistencia";
 
     }
 

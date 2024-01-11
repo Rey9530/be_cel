@@ -25,7 +25,7 @@ export class MarkingsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Query() filterDTO: FilterDTO
   ) {
-    return this.markingsService.getAllMarkings(id, filterDTO);
+    return this.markingsService.getAllMarkings(id, filterDTO); 
   }
 
   @Get('excel/contract/:id')

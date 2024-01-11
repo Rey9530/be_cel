@@ -84,8 +84,7 @@ export class FilesController {
   )
   uploadFilee(
     @UploadedFile() file,
-  ) {
-    console.log(file);
+  ) { 
     return this.filesService.identify(file);
   }
 }
