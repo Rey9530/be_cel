@@ -3,22 +3,25 @@ import { CreateMarkingDto } from './dto/create-marking.dto';
 import { UpdateMarkingDto } from './dto/update-marking.dto';
 import { PrismaService } from 'src/common/services';
 import { FilterDTO } from './dto/filter.dto';
-import { TimeType, convert_date, calculateDaysBetweenDates, areDatesEqual, formatDateInSpanish } from 'src/common/helpers';
+import {
+  TimeType,
+  convert_date,
+  calculateDaysBetweenDates,
+  areDatesEqual,
+  formatDateInSpanish,
+} from 'src/common/helpers';
 
 import * as Excel from 'exceljs';
 
 @Injectable()
 export class MarkingsService {
-
-
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   create(createMarkingDto: CreateMarkingDto) {
     return 'This action adds a new marking';
   }
 
   async getAllMarkings(id: string, filterDTO: FilterDTO) {
-
     var startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
     var endDate = convert_date(filterDTO.date_end, TimeType.Fin);
     var data = await this.prisma.mar_hor_horarios.findMany({
@@ -29,7 +32,7 @@ export class MarkingsService {
       include: {
         mar_asi_asignacion: {
           orderBy: {
-            asi_codemp: 'asc'
+            asi_codemp: 'asc',
           },
           where: {
             asi_estado: 'ACTIVE',
@@ -40,24 +43,24 @@ export class MarkingsService {
               where: {
                 his_feccrea: {
                   gte: startDate, // Mayor o igual que startDate
-                  lte: endDate
-                }
+                  lte: endDate,
+                },
               },
               orderBy: {
-                his_feccrea: 'asc'
-              }
+                his_feccrea: 'asc',
+              },
             },
             mar_emp_empleados: {
               include: {
-                mar_ubi_ubicaciones: true
-              }
-            }
-          }
+                mar_ubi_ubicaciones: true,
+              },
+            },
+          },
         },
         mar_hde_detalle_ho: {
           where: { hde_estado: 'ACTIVE' },
-        }
-      }
+        },
+      },
     });
     var dataResp = [];
     for (let index = 0; index < data.length; index++) {
@@ -78,18 +81,17 @@ export class MarkingsService {
             entrada: hora.his_hora_entrada,
             entrada_tardia: hora.his_entrada_tarde,
             salida: hora.his_hora_salida,
-            salida_temprana:hora.his_salida_temp,
+            salida_temprana: hora.his_salida_temp,
             tiempo_extra: hora.his_tp_extra,
-            tiempo_trabajado: hora.his_tp_trabajado, 
+            tiempo_trabajado: hora.his_tp_trabajado,
             sede: asig.mar_emp_empleados.mar_ubi_ubicaciones.ubi_nombre,
-          }
+          };
           dataResp.push(registro);
         }
       }
     }
     return dataResp;
   }
-
 
   async excelAllMarkings(id: string, filterDTO: FilterDTO) {
     var font = {
@@ -98,7 +100,7 @@ export class MarkingsService {
       size: 16,
     };
     var contrats = await this.prisma.mar_ctr_contratos.findUnique({
-      where: { ctr_codigo: id, ctr_estado: 'ACTIVE' }
+      where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
     });
     if (!contrats) throw new NotFoundException(`Regisro no encontrado`);
 
@@ -114,21 +116,37 @@ export class MarkingsService {
     worksheet.mergeCells('A2:AG2');
     worksheet.getCell('AG2').value = contrats.ctr_nombre;
     worksheet.getCell('AG2').font = font;
-    worksheet.getCell('AG2').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('AG2').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     worksheet.mergeCells('A3:AG3');
     worksheet.getCell('AG3').value = 'Contrato: ' + contrats.ctr_num_contrato;
     worksheet.getCell('AG3').font = font;
-    worksheet.getCell('AG3').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('AG3').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     worksheet.mergeCells('A4:AG4');
-    worksheet.getCell('AG4').value = 'Control de asistencia diaria del personal correspondiente al período ' + formatDateInSpanish(startDate) + '  al ' + formatDateInSpanish(endDate);
+    worksheet.getCell('AG4').value =
+      'Control de asistencia diaria del personal correspondiente al período ' +
+      formatDateInSpanish(startDate) +
+      '  al ' +
+      formatDateInSpanish(endDate);
     worksheet.getCell('AG4').font = font;
-    worksheet.getCell('AG4').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('AG4').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     worksheet.mergeCells('A5:AG5');
     worksheet.getCell('AG5').value = ' ';
     worksheet.getCell('AG5').font = font;
-    worksheet.getCell('AG5').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('AG5').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
 
-    // Guardar en un buffer 
+    // Guardar en un buffer
     var data = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_codctro: id,
@@ -137,7 +155,9 @@ export class MarkingsService {
       include: {
         mar_asi_asignacion: {
           orderBy: {
-            asi_codemp: 'asc'
+            mar_emp_empleados: {
+              emp_apellidos: 'asc',
+            },
           },
           where: {
             asi_estado: 'ACTIVE',
@@ -148,20 +168,20 @@ export class MarkingsService {
               where: {
                 his_feccrea: {
                   gte: startDate, // Mayor o igual que startDate
-                  lte: endDate
-                }
+                  lte: endDate,
+                },
               },
               orderBy: {
-                his_feccrea: 'asc'
-              }
+                his_feccrea: 'asc',
+              },
             },
-            mar_emp_empleados: true
-          }
+            mar_emp_empleados: true,
+          },
         },
         mar_hde_detalle_ho: {
           where: { hde_estado: 'ACTIVE' },
-        }
-      }
+        },
+      },
     });
     var fontheader = {
       name: 'Arial Black',
@@ -169,10 +189,16 @@ export class MarkingsService {
     };
     worksheet.getCell('A7').value = 'Cod';
     worksheet.getCell('A7').font = fontheader;
-    worksheet.getCell('A7').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('A7').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     worksheet.getCell('B7').value = 'Nombre';
     worksheet.getCell('B7').font = fontheader;
-    worksheet.getCell('B7').alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getCell('B7').alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     var daysSelect = calculateDaysBetweenDates(startDate, endDate);
     worksheet.getColumn(1).width = 10;
     worksheet.getColumn(2).width = 20;
@@ -187,14 +213,19 @@ export class MarkingsService {
       // Sumar los días
       row.getCell(index).value = dayDate.getDate().toString();
       row.getCell(index).font = fontheader;
-      row.getCell(index).alignment = { vertical: 'middle', horizontal: 'center' };
+      row.getCell(index).alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+      };
       dayDate.setDate(dayDate.getDate() + 1);
-
     }
     lastColum++;
-    row.getCell(lastColum).value = "Firma del\nEmpleado";
+    row.getCell(lastColum).value = 'Firma del\nEmpleado';
     row.getCell(lastColum).font = fontheader;
-    row.getCell(lastColum).alignment = { vertical: 'middle', horizontal: 'center' };
+    row.getCell(lastColum).alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+    };
     worksheet.getColumn(lastColum).width = 20;
 
     var startRow = 8;
@@ -203,30 +234,44 @@ export class MarkingsService {
       for (let e = 0; e < horarios.mar_asi_asignacion.length; e++) {
         const asig = horarios.mar_asi_asignacion[e];
         if (asig.mar_his_historial.length == 0) continue;
-        worksheet.getCell('A' + startRow).value = asig.mar_emp_empleados.emp_codigo_emp;
-        worksheet.getCell('A' + startRow).alignment = { vertical: 'middle', horizontal: 'center' };
-        worksheet.getCell('B' + startRow).value = asig.mar_emp_empleados.emp_nombres + ' ' + asig.mar_emp_empleados.emp_apellidos;
+        worksheet.getCell('A' + startRow).value =
+          asig.mar_emp_empleados.emp_codigo_emp;
+        worksheet.getCell('A' + startRow).alignment = {
+          vertical: 'middle',
+          horizontal: 'center',
+        };
+        worksheet.getCell('B' + startRow).value =
+          asig.mar_emp_empleados.emp_apellidos +
+          ', ' +
+          asig.mar_emp_empleados.emp_nombres;
 
         const row = worksheet.getRow(startRow);
         var dayDateEmp = convert_date(filterDTO.date_start, TimeType.Inicio);
         for (let ie = 3; ie <= daysSelect; ie++) {
-          // Sumar los días 
+          // Sumar los días
           // row.getCell(ie).font = fontheader;
-          row.getCell(ie).alignment = { vertical: 'middle', horizontal: 'center' };
+          row.getCell(ie).alignment = {
+            vertical: 'middle',
+            horizontal: 'center',
+          };
 
           row.getCell(ie).border = {
             top: { style: 'thin' },
             left: { style: 'thin' },
             bottom: { style: 'thin' },
-            right: { style: 'thin' }
+            right: { style: 'thin' },
           };
 
           row.getCell(ie).value = '';
-          for (let iHistorial = 0; iHistorial < asig.mar_his_historial.length; iHistorial++) {
+          for (
+            let iHistorial = 0;
+            iHistorial < asig.mar_his_historial.length;
+            iHistorial++
+          ) {
             const histial = asig.mar_his_historial[iHistorial];
             var isCorrectDay = areDatesEqual(dayDateEmp, histial.his_feccrea);
             if (isCorrectDay) {
-              row.getCell(ie).value ='X';
+              row.getCell(ie).value = 'X';
               // row.getCell(ie).fill = {
               //   type: 'pattern',
               //   pattern: 'solid',
@@ -234,7 +279,6 @@ export class MarkingsService {
               // };
               break;
             }
-
           }
 
           dayDateEmp.setDate(dayDateEmp.getDate() + 1);
@@ -243,31 +287,29 @@ export class MarkingsService {
         startRow++;
       }
 
-
-      worksheet.getCell('B' + (startRow + 1)).value = "A: Asueto";
+      worksheet.getCell('B' + (startRow + 1)).value = 'A: Asueto';
 
       worksheet.getCell('B' + (startRow + 1)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFFC000' },
       };
-      worksheet.getCell('B' + (startRow + 2)).value = "D: Descanso";
-      worksheet.getCell('B' + (startRow + 3)).value = "F: Falta (Sin permiso)";
-      worksheet.getCell('B' + (startRow + 4)).value = "I: Incapacidad";
+      worksheet.getCell('B' + (startRow + 2)).value = 'D: Descanso';
+      worksheet.getCell('B' + (startRow + 3)).value = 'F: Falta (Sin permiso)';
+      worksheet.getCell('B' + (startRow + 4)).value = 'I: Incapacidad';
       worksheet.getCell('B' + (startRow + 4)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFffff00' },
       };
-      worksheet.getCell('B' + (startRow + 5)).value = "P: Permiso";
+      worksheet.getCell('B' + (startRow + 5)).value = 'P: Permiso';
       worksheet.getCell('B' + (startRow + 5)).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF92D050' },
       };
-      worksheet.getCell('B' + (startRow + 6)).value = "V: Vacación";
-      worksheet.getCell('B' + (startRow + 6)).value = "X: Asistencia";
-
+      worksheet.getCell('B' + (startRow + 6)).value = 'V: Vacación';
+      worksheet.getCell('B' + (startRow + 6)).value = 'X: Asistencia';
     }
 
     // var dataResp = [];
