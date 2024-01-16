@@ -28,6 +28,14 @@ export class MarkingsController {
     return this.markingsService.getAllMarkings(id, filterDTO); 
   }
 
+
+  @Get('list/extra-hours/:id')
+  getAllExtraHours(
+    @Param('id', ParseUUIDPipe) id: string, 
+  ) {
+    return this.markingsService.getAllExtraHours(id); 
+  }
+
   @Get('excel/contract/:id')
   async excelAllMarkings(
     @Param('id', ParseUUIDPipe) id: string,

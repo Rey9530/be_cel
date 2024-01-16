@@ -182,6 +182,7 @@ model mar_his_historial {
   his_salida_temp    Boolean?           @default(false)
   his_tp_trabajado   String
   his_tp_extra       String
+  his_tp_extra_apro  EstadoHorasExtra   @default(PENDIENTE)
   his_feccreacion    DateTime?          @default(now()) @db.Date()
   emp_estado         Estado             @default(ACTIVE)
   his_feccrea        DateTime           @default(now())
@@ -190,6 +191,12 @@ model mar_his_historial {
   his_usrmod         String
   his_codasi         String
   mar_asi_asignacion mar_asi_asignacion @relation(fields: [his_codasi], references: [asi_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_his_asi_fk")
+}
+
+enum EstadoHorasExtra {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
 }
 
 enum Estado {

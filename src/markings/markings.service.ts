@@ -21,6 +21,89 @@ export class MarkingsService {
     return 'This action adds a new marking';
   }
 
+  async getAllExtraHours(id: string) {
+    var date = new Date();
+    const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    console.log({
+      gte: startDate,
+      lte: endDate,
+    });
+    var respDB = await this.prisma.mar_hor_horarios.findMany({
+      where: {
+        hor_codctro: id,
+        hor_estado: 'ACTIVE',
+      },
+      include: {
+        mar_asi_asignacion: {
+          where: {
+            asi_estado: 'ACTIVE',
+          },
+          include: {
+            mar_emp_empleados: {
+              include: {
+                mar_con_contrataciones: true,
+                mar_ubi_ubicaciones: true,
+              },
+            },
+            mar_his_historial: {
+              where: {
+                his_feccrea: {
+                  gte: startDate,
+                  lte: endDate,
+                },
+                emp_estado: 'ACTIVE', 
+                his_tp_extra: {
+                  not: '0',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    var porProcesar = [];
+    var validadas = [];
+    var rechazadas = [];
+
+    for (let iDB = 0; iDB < respDB.length; iDB++) {
+      const dbRow = respDB[iDB];
+      for (let index = 0; index < dbRow.mar_asi_asignacion.length; index++) {
+        const element = dbRow.mar_asi_asignacion[index];
+        for (let iHis = 0; iHis < element.mar_his_historial.length; iHis++) {
+          const historial = element.mar_his_historial[iHis];
+          if (!(parseInt(historial.his_tp_extra) > 0)) {
+            continue;
+          }
+          var item = {
+            ...historial,
+            nombre: element.mar_emp_empleados.emp_nombres,
+            apellidos: element.mar_emp_empleados.emp_apellidos,
+            tipo_contratacion:
+              element.mar_emp_empleados.mar_con_contrataciones.con_nombre,
+            sede: element.mar_emp_empleados.mar_ubi_ubicaciones.ubi_nombre,
+            codigo_empleado:element.mar_emp_empleados.emp_codigo_emp,
+          };
+          if(historial.his_tp_extra_apro=='PENDIENTE'){
+            porProcesar.push(item);
+          }
+
+          if(historial.his_tp_extra_apro=='APROBADO'){
+            validadas.push(item);
+          }
+
+          if(historial.his_tp_extra_apro=='RECHAZADO'){
+            rechazadas.push(item);
+          }
+          
+        }
+      }
+    }
+
+    return {porProcesar,validadas,rechazadas};
+  }
+
   async getAllMarkings(id: string, filterDTO: FilterDTO) {
     var startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
     var endDate = convert_date(filterDTO.date_end, TimeType.Fin);
@@ -248,13 +331,10 @@ export class MarkingsService {
         const row = worksheet.getRow(startRow);
         var dayDateEmp = convert_date(filterDTO.date_start, TimeType.Inicio);
         for (let ie = 3; ie <= daysSelect; ie++) {
-          // Sumar los días
-          // row.getCell(ie).font = fontheader;
           row.getCell(ie).alignment = {
             vertical: 'middle',
             horizontal: 'center',
           };
-
           row.getCell(ie).border = {
             top: { style: 'thin' },
             left: { style: 'thin' },
