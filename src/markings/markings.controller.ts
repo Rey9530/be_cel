@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query, Res, StreamableFile, Header } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query, Res, StreamableFile, Header, Put } from '@nestjs/common';
 import { MarkingsService } from './markings.service';
 import { CreateMarkingDto } from './dto/create-marking.dto';
 import { UpdateMarkingDto } from './dto/update-marking.dto';
@@ -7,6 +7,7 @@ import { Auth } from 'src/users/decorators';
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 import { FilterDTO } from './dto/filter.dto';
 import { Response } from 'express';
+import { StatusDTO } from './dto/status.dto';
 
 @ApiTags('Markings')
 @Controller('v1/markings')
@@ -34,6 +35,15 @@ export class MarkingsController {
     @Param('id', ParseUUIDPipe) id: string, 
   ) {
     return this.markingsService.getAllExtraHours(id); 
+  }
+
+
+  @Put('status/extra-hours/:id')
+  updateAllExtraHours(
+    @Param('id', ParseUUIDPipe) id: string, 
+    @Body() statusDTO: StatusDTO
+  ) {
+    return this.markingsService.updateAllExtraHours(id,statusDTO); 
   }
 
   @Get('excel/contract/:id')

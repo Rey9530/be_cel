@@ -12,6 +12,7 @@ import {
 } from 'src/common/helpers';
 
 import * as Excel from 'exceljs';
+import { StatusDTO } from './dto/status.dto';
 
 @Injectable()
 export class MarkingsService {
@@ -20,15 +21,22 @@ export class MarkingsService {
   create(createMarkingDto: CreateMarkingDto) {
     return 'This action adds a new marking';
   }
+  async updateAllExtraHours(id: string, statusDTO: StatusDTO) {
+    var data = await this.prisma.mar_his_historial.update({
+      data: {
+        his_tp_extra_apro: statusDTO.status,
+      },
+      where: {
+        his_codigo: id,
+      },
+    });
+    return data;
+  }
 
   async getAllExtraHours(id: string) {
     var date = new Date();
     const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
     const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    console.log({
-      gte: startDate,
-      lte: endDate,
-    });
     var respDB = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_codctro: id,
@@ -52,7 +60,7 @@ export class MarkingsService {
                   gte: startDate,
                   lte: endDate,
                 },
-                emp_estado: 'ACTIVE', 
+                emp_estado: 'ACTIVE',
                 his_tp_extra: {
                   not: '0',
                 },
@@ -83,25 +91,24 @@ export class MarkingsService {
             tipo_contratacion:
               element.mar_emp_empleados.mar_con_contrataciones.con_nombre,
             sede: element.mar_emp_empleados.mar_ubi_ubicaciones.ubi_nombre,
-            codigo_empleado:element.mar_emp_empleados.emp_codigo_emp,
+            codigo_empleado: element.mar_emp_empleados.emp_codigo_emp,
           };
-          if(historial.his_tp_extra_apro=='PENDIENTE'){
+          if (historial.his_tp_extra_apro == 'PENDIENTE') {
             porProcesar.push(item);
           }
 
-          if(historial.his_tp_extra_apro=='APROBADO'){
+          if (historial.his_tp_extra_apro == 'APROBADO') {
             validadas.push(item);
           }
 
-          if(historial.his_tp_extra_apro=='RECHAZADO'){
+          if (historial.his_tp_extra_apro == 'RECHAZADO') {
             rechazadas.push(item);
           }
-          
         }
       }
     }
 
-    return {porProcesar,validadas,rechazadas};
+    return { porProcesar, validadas, rechazadas };
   }
 
   async getAllMarkings(id: string, filterDTO: FilterDTO) {
