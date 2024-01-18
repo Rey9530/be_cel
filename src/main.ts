@@ -11,14 +11,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new AllExceptionFilter());
-  app.useGlobalInterceptors(new TransformInterceptor()); //TODO: Ver que dope
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
   );
-
   const config = new DocumentBuilder()
     .setTitle('Marca Recognition')
     .setDescription('Marca Recognition APIs')

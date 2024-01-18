@@ -8,6 +8,7 @@ import { MarkingsModule } from './markings/markings.module';
 import { SeedModule } from './seed/seed.module'; 
 import { FilesModule } from './files/files.module'; 
 import { ChartsModule } from './charts/charts.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { ChartsModule } from './charts/charts.module';
     MarkingsModule,
     SeedModule,
     FilesModule,
-    ChartsModule,  
+    ChartsModule,
+    PermissionsModule,  
   ],
 })
 export class AppModule { }

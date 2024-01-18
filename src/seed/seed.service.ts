@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 export class SeedService {
   private readonly logger = new Logger('UsersService');
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
   async deleteSeed() {
     await this.prisma.mar_emp_empleados.deleteMany();
     await this.prisma.mar_epr_empresas.deleteMany();
@@ -15,12 +15,44 @@ export class SeedService {
     await this.prisma.mar_ubi_ubicaciones.deleteMany();
     await this.prisma.mar_con_contrataciones.deleteMany();
     await this.prisma.mar_dia_dias.deleteMany();
+    await this.prisma.mar_per_permisos.deleteMany();
+    await this.prisma.mar_mop_motivo_per.deleteMany();
   }
 
   async executeSeed() {
     try {
       await this.deleteSeed();
-      var cremod = 'Creado por el seeder';
+      var cremod = 'Creado por el seeder'; 
+      await this.prisma.mar_mop_motivo_per.createMany({
+        data: [
+          {
+            mop_nombre: 'Asueto',
+            mop_usrcrea: cremod,
+            mop_usrmod: cremod,
+          },
+          {
+            mop_nombre: 'Descanso',
+            mop_usrcrea: cremod,
+            mop_usrmod: cremod,
+          },
+          {
+            mop_nombre: 'Falta sin permiso',
+            mop_usrcrea: cremod,
+            mop_usrmod: cremod,
+          },
+          {
+            mop_nombre: 'Falta con permiso',
+            mop_usrcrea: cremod,
+            mop_usrmod: cremod,
+          },
+          {
+            mop_nombre: 'Incapacidad',
+            mop_usrcrea: cremod,
+            mop_usrmod: cremod,
+          },
+        ],
+      });
+
       await this.prisma.mar_ubi_ubicaciones.createMany({
         data: [
           {
@@ -195,7 +227,7 @@ export class SeedService {
           epr_contacto_correo: 'demo@demo.com',
           epr_contacto_telefono: '+50365326545',
           epr_usrcrea: cremod,
-          epr_usrmod: cremod, 
+          epr_usrmod: cremod,
         },
       });
 

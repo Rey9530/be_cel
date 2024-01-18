@@ -72,24 +72,26 @@ model mar_epr_empresas {
 }
 
 model mar_emp_empleados {
-  emp_codigo             String                 @id(map: "mar_emp_pk") @default(uuid())
-  emp_codigo_emp         String
-  emp_fecha_nacimiento   DateTime               @db.Date()
-  emp_nombres            String
-  emp_apellidos          String
-  emp_estado             Estado                 @default(ACTIVE)
-  emp_feccrea            DateTime               @default(now())
-  emp_fecmod             DateTime               @default(now()) @db.Timestamptz()
-  emp_usrcrea            String
-  emp_usrmod             String
-  emp_codgen             String
-  emp_codemp             String // esta es una foranea pero no hace contrans para evitar relacion ciclica
-  mar_gen_generos        mar_gen_generos        @relation(fields: [emp_codgen], references: [gen_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_gen_fk")
-  emp_codubi             String
-  mar_ubi_ubicaciones    mar_ubi_ubicaciones    @relation(fields: [emp_codubi], references: [ubi_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_ubi_fk")
-  emp_codcon             String
-  mar_con_contrataciones mar_con_contrataciones @relation(fields: [emp_codcon], references: [con_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_con_fk")
-  mar_asi_asignacion     mar_asi_asignacion[]
+  emp_codigo                 String                 @id(map: "mar_emp_pk") @default(uuid())
+  emp_codigo_emp             String
+  emp_fecha_nacimiento       DateTime               @db.Date()
+  emp_nombres                String
+  emp_apellidos              String
+  emp_estado                 Estado                 @default(ACTIVE)
+  emp_feccrea                DateTime               @default(now())
+  emp_fecmod                 DateTime               @default(now()) @db.Timestamptz()
+  emp_usrcrea                String
+  emp_usrmod                 String
+  emp_codgen                 String
+  emp_codemp                 String // esta es una foranea pero no hace contrans para evitar relacion ciclica
+  mar_gen_generos            mar_gen_generos        @relation(fields: [emp_codgen], references: [gen_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_gen_fk")
+  emp_codubi                 String
+  mar_ubi_ubicaciones        mar_ubi_ubicaciones    @relation(fields: [emp_codubi], references: [ubi_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_ubi_fk")
+  emp_codcon                 String
+  mar_con_contrataciones     mar_con_contrataciones @relation(fields: [emp_codcon], references: [con_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_emp_con_fk")
+  mar_asi_asignacion         mar_asi_asignacion[]
+  mar_per_permisos           mar_per_permisos[]     @relation(name: "EmpleadoRelacion")
+  mar_per_permisos_reemplazo mar_per_permisos[]     @relation(name: "EmpleadoReemplazoRelacion")
 }
 
 model mar_usr_usuario {
@@ -139,7 +141,7 @@ model mar_hor_horarios {
   hor_usrcrea        String
   hor_usrmod         String
   mar_hde_detalle_ho mar_hde_detalle_ho[]
-  mar_asi_asignacion mar_asi_asignacion[]
+  mar_asi_asignacion mar_asi_asignacion[] 
 }
 
 model mar_hde_detalle_ho {
@@ -172,6 +174,7 @@ model mar_asi_asignacion {
   asi_codemp        String
   mar_emp_empleados mar_emp_empleados   @relation(fields: [asi_codemp], references: [emp_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_asi_emp_fk")
   mar_his_historial mar_his_historial[]
+  mar_per_permisos  mar_per_permisos[]
 }
 
 model mar_his_historial {
@@ -191,6 +194,37 @@ model mar_his_historial {
   his_usrmod         String
   his_codasi         String
   mar_asi_asignacion mar_asi_asignacion @relation(fields: [his_codasi], references: [asi_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_his_asi_fk")
+}
+
+model mar_mop_motivo_per {
+  mop_codigo       String             @id(map: "mar_mop_pk") @default(uuid()) //Ultimo usuario que actualizo el registro
+  mop_nombre       String
+  mop_estado       Estado             @default(ACTIVE)
+  mop_feccrea      DateTime           @default(now())
+  mop_fecmod       DateTime           @default(now()) @db.Timestamptz()
+  mop_usrcrea      String
+  mop_usrmod       String
+  mar_per_permisos mar_per_permisos[]
+}
+
+model mar_per_permisos {
+  per_codigo                 String             @id(map: "mar_per_pk") @default(uuid()) //Ultimo usuario que actualizo el registro
+  per_codasi                 String
+  mar_asi_asignacion         mar_asi_asignacion @relation(fields: [per_codasi], references: [asi_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_per_asi_fk")
+  per_codemp                 String
+  mar_emp_empleado           mar_emp_empleados  @relation(name: "EmpleadoRelacion", fields: [per_codemp], references: [emp_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_per_emp_fk")
+  per_codemp_reemplazo       String
+  mar_emp_empleado_reemplazo mar_emp_empleados  @relation(name: "EmpleadoReemplazoRelacion", fields: [per_codemp_reemplazo], references: [emp_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_per_emp_remplazo_fk")
+  per_codmop                 String
+  mar_mop_motivo_per         mar_mop_motivo_per @relation(fields: [per_codmop], references: [mop_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_per_mop_fk")
+  per_fecha_inicio           DateTime?          @default(now()) @db.Date()
+  per_fecha_fin              DateTime?          @default(now()) @db.Date()
+  per_comentario             String
+  per_estado                 Estado             @default(ACTIVE)
+  per_feccrea                DateTime           @default(now())
+  per_fecmod                 DateTime           @default(now()) @db.Timestamptz()
+  per_usrcrea                String
+  per_usrmod                 String 
 }
 
 enum EstadoHorasExtra {
