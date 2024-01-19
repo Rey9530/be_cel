@@ -43,6 +43,9 @@ export class FilesController {
           cb(null, new Date().getTime() + `.${splitName[1]}`);
         },
       }),
+      limits: {
+        fileSize: 1024 * 1024 * 8 // Límite de tamaño de archivo (ejemplo: 5MB)
+      },
       fileFilter: imageFileFilter
     }),
   )

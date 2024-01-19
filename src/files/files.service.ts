@@ -117,8 +117,7 @@ export class FilesService {
           lte: endDate
         }
       },
-    });
-    console.log(hisRecent)
+    }); 
 
 
     if (hisRecent) {
