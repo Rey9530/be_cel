@@ -26,7 +26,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto, user: mar_usr_usuario) {
     try {
       const { usr_contrasenia, ...resto } = createUserDto;
-      var data: any = {
+      let data: any = {
         usr_contrasenia: bcrypt.hashSync(usr_contrasenia, 10),
         usr_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
         usr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
@@ -110,7 +110,7 @@ export class UsersService {
       });
     }
     delete user.usr_contrasenia;
-    var data: any = {
+    let data: any = {
       ...user,
       token: this.getJwtToken({ marca_usr_uuid: user.usr_codigo }),
     };
@@ -168,7 +168,7 @@ export class UsersService {
     await this.findOne(id);
     try {
       const { usr_contrasenia, ...resto } = updateUserDto;
-      var data: any = {
+      let data: any = {
         usr_contrasenia: bcrypt.hashSync(usr_contrasenia, 10),
         usr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
         usr_codigo_emple: resto.usr_codigo,

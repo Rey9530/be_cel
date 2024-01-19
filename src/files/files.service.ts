@@ -39,8 +39,8 @@ export class FilesService {
     }
   }
   async renameFile(file: any, code: string): Promise<void> {
-    var newPath = UPLOADFILE + '/' + code + '.png';
-    var user = await this.prisma.mar_emp_empleados.findFirst({
+    let newPath = UPLOADFILE + '/' + code + '.png';
+    let user = await this.prisma.mar_emp_empleados.findFirst({
       where: {
         emp_codigo_emp: code,
         emp_estado: 'ACTIVE',
@@ -75,14 +75,14 @@ export class FilesService {
         'Ha ocurrido un error al generar el escaneo',
       );
     }
-    var name = file.filename.split('.');
-    var employee_code = await this.obtenerDatos(name[0]);
+    let name = file.filename.split('.');
+    let employee_code = await this.obtenerDatos(name[0]);
     await this.deleteFileExists(file.path);
     if (employee_code == 'no encontrada') {
       throw new UnauthorizedException('Empleado no encontrado');
     }
-    var code = employee_code.replace('.png', '');
-    var employe = await this.prisma.mar_emp_empleados.findFirst({
+    let code = employee_code.replace('.png', '');
+    let employe = await this.prisma.mar_emp_empleados.findFirst({
       where: {
         emp_codigo_emp: code,
         emp_estado: 'ACTIVE',
@@ -91,7 +91,7 @@ export class FilesService {
     if (!employe) {
       throw new UnauthorizedException('Empleado no encontrado');
     }
-    var empAsig = await this.prisma.mar_asi_asignacion.findFirst({
+    let empAsig = await this.prisma.mar_asi_asignacion.findFirst({
       where: {
         asi_codemp: employe.emp_codigo,
         asi_estado: 'ACTIVE',
@@ -105,10 +105,10 @@ export class FilesService {
         'El empleado no horario asignado, verificar con el administrador del contrato',
       );
     }
-    var startDate = new Date();
+    let startDate = new Date();
     startDate.setMinutes(startDate.getMinutes() - 5);
-    var endDate = new Date();
-    var hisRecent = await this.prisma.mar_his_historial.findFirst({
+    let endDate = new Date();
+    let hisRecent = await this.prisma.mar_his_historial.findFirst({
       where: {
         his_codasi: empAsig.asi_codigo,
         emp_estado: 'ACTIVE',
@@ -121,30 +121,30 @@ export class FilesService {
 
 
     if (hisRecent) {
-      var msg = hisRecent.his_hora_salida == null ? 'de entrada' : 'de salida';
+      let msg = hisRecent.his_hora_salida == null ? 'de entrada' : 'de salida';
       throw new InternalServerErrorException(
         'Ya se realizo una marcacion '+msg,
       );
     }
     try {
 
-      var marcacion_hora = new Date();
-      var days = await this.prisma.mar_dia_dias.findFirst({
+      let marcacion_hora = new Date();
+      let days = await this.prisma.mar_dia_dias.findFirst({
         where: {
           dia_dia_codigo: marcacion_hora.getDay().toString(),
           dia_estado: 'ACTIVE'
         },
       });
 
-      var his = await this.prisma.mar_his_historial.findFirst({
+      let his = await this.prisma.mar_his_historial.findFirst({
         where: {
           his_codasi: empAsig.asi_codigo,
           his_hora_salida: null,
           emp_estado: 'ACTIVE',
         },
       });
-      var respApi;
-      var horDetail = await this.prisma.mar_hde_detalle_ho.findFirst({
+      let respApi;
+      let horDetail = await this.prisma.mar_hde_detalle_ho.findFirst({
         where: {
           hde_coddia: days.dia_codigo,
           hde_codhor: empAsig.mar_hor_horarios.hor_codigo,
@@ -154,42 +154,42 @@ export class FilesService {
           mar_dia_dias: true
         }
       });
-      var h_inicio1 = horDetail.hde_inicio_1.split(":");
-      var inicio_1;
+      let h_inicio1 = horDetail.hde_inicio_1.split(":");
+      let inicio_1;
       if (h_inicio1.length > 1) {
         inicio_1 = this.getDate(h_inicio1[0], h_inicio1[1]);
       }
       if (his) {
-        var h_fin1 = horDetail.hde_fin_1.split(":");
-        var fin_1;
+        let h_fin1 = horDetail.hde_fin_1.split(":");
+        let fin_1;
         if (h_fin1.length > 1) {
           fin_1 = this.getDate(h_fin1[0], h_fin1[1]);
         }
-        var h_inicio2 = horDetail.hde_inicio_2.split(":");
-        var inicio_2;
+        let h_inicio2 = horDetail.hde_inicio_2.split(":");
+        let inicio_2;
         if (h_inicio2.length > 1) {
           inicio_2 = this.getDate(h_inicio2[0], h_inicio2[1]);
         }
-        var h_fin2 = horDetail.hde_fin_2.split(":");
-        var fin_2;
+        let h_fin2 = horDetail.hde_fin_2.split(":");
+        let fin_2;
         if (h_fin2.length > 1) {
           fin_2 = this.getDate(h_fin2[0], h_fin2[1]);
         }
-        var horas_deber_cumplir = 0;
+        let horas_deber_cumplir = 0;
         if (inicio_1 != null && fin_1 != null) {
           horas_deber_cumplir = this.calcularHorasEntreFechas(inicio_1, fin_1);
         }
-
+        let diferenAlSalir =0;
         if (fin_1 != null) {
-          var diferenAlSalir = this.diferenciaEnMinutos(fin_1, marcacion_hora);
+            diferenAlSalir = this.diferenciaEnMinutos(fin_1, marcacion_hora);
         }
 
-        var his_tp_extra = (horas_deber_cumplir > 0 ? (horas_trabajadas - horas_deber_cumplir) : 0);
-        var hora = his.his_hora_entrada;
-        var start_date = new Date(marcacion_hora.getFullYear(), marcacion_hora.getMonth(), marcacion_hora.getDate(), hora.getHours(), hora.getMinutes());
-        var end_date = new Date(marcacion_hora.getFullYear(), marcacion_hora.getMonth(), marcacion_hora.getDate(), marcacion_hora.getHours(), marcacion_hora.getMinutes());
-        var horas_trabajadas = this.calcularHorasEntreFechas(start_date, end_date);
-        var datos = {
+        let hora = his.his_hora_entrada;
+        let start_date = new Date(marcacion_hora.getFullYear(), marcacion_hora.getMonth(), marcacion_hora.getDate(), hora.getHours(), hora.getMinutes());
+        let end_date = new Date(marcacion_hora.getFullYear(), marcacion_hora.getMonth(), marcacion_hora.getDate(), marcacion_hora.getHours(), marcacion_hora.getMinutes());
+        let horas_trabajadas = this.calcularHorasEntreFechas(start_date, end_date);
+        let his_tp_extra = (horas_deber_cumplir > 0 ? (horas_trabajadas - horas_deber_cumplir) : 0);
+        let datos = {
           his_hora_salida: marcacion_hora,
           his_tp_trabajado: horas_trabajadas.toFixed(2),
           his_tp_extra: (his_tp_extra > 0 ? his_tp_extra : 0).toString(),
@@ -202,10 +202,11 @@ export class FilesService {
           data: datos,
         });
       } else {
+        let diferenAlEntrar = 0;
         if (inicio_1 != null) {
-          var diferenAlEntrar = this.diferenciaEnMinutos(marcacion_hora, inicio_1);
+          diferenAlEntrar = this.diferenciaEnMinutos(marcacion_hora, inicio_1);
         }
-        var data = {
+        let data = {
           his_hora_entrada: marcacion_hora,
           his_entrada_tarde: diferenAlEntrar > 10,
           his_hora_salida: null,
@@ -230,13 +231,13 @@ export class FilesService {
   }
 
   formatAMPM(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? 'pm' : 'am';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
+    let strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
   calcularHorasEntreFechas(fechaInicial: Date, fechaFinal: Date): number {
@@ -259,7 +260,7 @@ export class FilesService {
 
   async obtenerDatos(path): Promise<any> {
     try {
-      var path_ = `${this.configService.get('URL_PYTHON')}/${path}`;
+      let path_ = `${this.configService.get('URL_PYTHON')}/${path}`;
       const respuesta: AxiosResponse = await axios.get(path_);
       if (respuesta.status == 200) {
         return respuesta.data.persona;
@@ -273,8 +274,8 @@ export class FilesService {
   }
 
   getDate(hora: string = '00', minutos: string = '00') {
-    var date = new Date();
-    var retrunDate = new Date(
+    let date = new Date();
+    let retrunDate = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),

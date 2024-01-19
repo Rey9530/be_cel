@@ -22,7 +22,7 @@ export class MarkingsService {
     return 'This action adds a new marking';
   }
   async updateAllExtraHours(id: string, statusDTO: StatusDTO) {
-    var data = await this.prisma.mar_his_historial.update({
+    let data = await this.prisma.mar_his_historial.update({
       data: {
         his_tp_extra_apro: statusDTO.status,
       },
@@ -34,10 +34,10 @@ export class MarkingsService {
   }
 
   async getAllExtraHours(id: string) {
-    var date = new Date();
+    let date = new Date();
     const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
     const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    var respDB = await this.prisma.mar_hor_horarios.findMany({
+    let respDB = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_codctro: id,
         hor_estado: 'ACTIVE',
@@ -71,9 +71,9 @@ export class MarkingsService {
       },
     });
 
-    var porProcesar = [];
-    var validadas = [];
-    var rechazadas = [];
+    let porProcesar = [];
+    let validadas = [];
+    let rechazadas = [];
 
     for (let iDB = 0; iDB < respDB.length; iDB++) {
       const dbRow = respDB[iDB];
@@ -84,7 +84,7 @@ export class MarkingsService {
           if (!(parseInt(historial.his_tp_extra) > 0)) {
             continue;
           }
-          var item = {
+          let item = {
             ...historial,
             nombre: element.mar_emp_empleados.emp_nombres,
             apellidos: element.mar_emp_empleados.emp_apellidos,
@@ -112,9 +112,9 @@ export class MarkingsService {
   }
 
   async getAllMarkings(id: string, filterDTO: FilterDTO) {
-    var startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
-    var endDate = convert_date(filterDTO.date_end, TimeType.Fin);
-    var data = await this.prisma.mar_hor_horarios.findMany({
+    let startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
+    let endDate = convert_date(filterDTO.date_end, TimeType.Fin);
+    let data = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_codctro: id,
         hor_estado: 'ACTIVE',
@@ -152,7 +152,7 @@ export class MarkingsService {
         },
       },
     });
-    var dataResp = [];
+    let dataResp = [];
     for (let index = 0; index < data.length; index++) {
       const horarios = data[index];
       for (let e = 0; e < horarios.mar_asi_asignacion.length; e++) {
@@ -162,7 +162,7 @@ export class MarkingsService {
         }
         for (let a = 0; a < asig.mar_his_historial.length; a++) {
           const hora = asig.mar_his_historial[a];
-          var registro = {
+          let registro = {
             nombres: asig.mar_emp_empleados.emp_nombres,
             apellidos: asig.mar_emp_empleados.emp_apellidos,
             codigo: asig.mar_emp_empleados.emp_codigo_emp,
@@ -184,18 +184,18 @@ export class MarkingsService {
   }
 
   async excelAllMarkings(id: string, filterDTO: FilterDTO) {
-    var font = {
+    let font = {
       name: 'Arial Black',
       color: { argb: 'FF000000' },
       size: 16,
     };
-    var contrats = await this.prisma.mar_ctr_contratos.findUnique({
+    let contrats = await this.prisma.mar_ctr_contratos.findUnique({
       where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
     });
     if (!contrats) throw new NotFoundException(`Regisro no encontrado`);
 
-    var startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
-    var endDate = convert_date(filterDTO.date_end, TimeType.Fin);
+    let startDate = convert_date(filterDTO.date_start, TimeType.Inicio);
+    let endDate = convert_date(filterDTO.date_end, TimeType.Fin);
     const workbook = new Excel.Workbook();
     workbook.creator = 'CEL';
     workbook.lastModifiedBy = 'CEL - Marcaciones';
@@ -237,7 +237,7 @@ export class MarkingsService {
     };
 
     // Guardar en un buffer
-    var data = await this.prisma.mar_hor_horarios.findMany({
+    let data = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_codctro: id,
         hor_estado: 'ACTIVE',
@@ -273,7 +273,7 @@ export class MarkingsService {
         },
       },
     });
-    var fontheader = {
+    let fontheader = {
       name: 'Arial Black',
       color: { argb: 'FF000000' },
     };
@@ -289,17 +289,17 @@ export class MarkingsService {
       vertical: 'middle',
       horizontal: 'center',
     };
-    var daysSelect = calculateDaysBetweenDates(startDate, endDate);
+    let daysSelect = calculateDaysBetweenDates(startDate, endDate);
     worksheet.getColumn(1).width = 10;
     worksheet.getColumn(2).width = 20;
     daysSelect = daysSelect + 2;
     const row = worksheet.getRow(7);
-    var lastColum = 0;
+    let lastColum = 0;
     for (let index = 3; index <= daysSelect; index++) {
       lastColum = index;
       const dobCol = worksheet.getColumn(index);
       dobCol.width = 5;
-      var dayDate = startDate;
+      let dayDate = startDate;
       // Sumar los días
       row.getCell(index).value = dayDate.getDate().toString();
       row.getCell(index).font = fontheader;
@@ -318,7 +318,7 @@ export class MarkingsService {
     };
     worksheet.getColumn(lastColum).width = 20;
 
-    var startRow = 8;
+    let startRow = 8;
     for (let index = 0; index < data.length; index++) {
       const horarios = data[index];
       for (let e = 0; e < horarios.mar_asi_asignacion.length; e++) {
@@ -336,7 +336,7 @@ export class MarkingsService {
           asig.mar_emp_empleados.emp_nombres;
 
         const row = worksheet.getRow(startRow);
-        var dayDateEmp = convert_date(filterDTO.date_start, TimeType.Inicio);
+        let dayDateEmp = convert_date(filterDTO.date_start, TimeType.Inicio);
         for (let ie = 3; ie <= daysSelect; ie++) {
           row.getCell(ie).alignment = {
             vertical: 'middle',
@@ -356,7 +356,7 @@ export class MarkingsService {
             iHistorial++
           ) {
             const histial = asig.mar_his_historial[iHistorial];
-            var isCorrectDay = areDatesEqual(dayDateEmp, histial.his_feccrea);
+            let isCorrectDay = areDatesEqual(dayDateEmp, histial.his_feccrea);
             if (isCorrectDay) {
               row.getCell(ie).value = 'X';
               // row.getCell(ie).fill = {
@@ -399,7 +399,7 @@ export class MarkingsService {
       worksheet.getCell('B' + (startRow + 6)).value = 'X: Asistencia';
     }
 
-    // var dataResp = [];
+    // let dataResp = [];
     // for (let index = 0; index < data.length; index++) {
     //   const horarios = data[index];
     //   for (let e = 0; e < horarios.mar_asi_asignacion.length; e++) {
@@ -409,7 +409,7 @@ export class MarkingsService {
     //     }
     //     for (let a = 0; a < asig.mar_his_historial.length; a++) {
     //       const hora = asig.mar_his_historial[a];
-    //       var registro = {
+    //       let registro = {
     //         nombres: asig.mar_emp_empleados.emp_nombres,
     //         apellidos: asig.mar_emp_empleados.emp_apellidos,
     //         codigo: asig.mar_emp_empleados.emp_codigo_emp,

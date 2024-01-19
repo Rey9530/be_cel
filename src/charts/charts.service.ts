@@ -14,7 +14,7 @@ export class ChartsService {
       },
     });
     if (!contract) throw new NotFoundException(`Regisro no encontrado`);
-    var [genders, contrations, extraHours, time, months] = await Promise.all([
+    let [genders, contrations, extraHours, time, months] = await Promise.all([
       this.getChartsGenderContract(contract),
       this.getChartsContrationContract(contract),
       this.getCountHourExtrContract(contract),
@@ -25,7 +25,7 @@ export class ChartsService {
   }
 
   async getCountLatesContract(contract: mar_ctr_contratos) {
-    var date = new Date();
+    let date = new Date();
     const startDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
     const ultimoDia = new Date(date.getFullYear(), date.getMonth(), 0);
     const respDb = await this.prisma.mar_hor_horarios.findMany({
@@ -52,9 +52,9 @@ export class ChartsService {
         },
       },
     });
-    var inLate = 0;
-    var onTime = 0;
-    var total = 0;
+    let inLate = 0;
+    let onTime = 0;
+    let total = 0;
     for (let iHorarios = 0; iHorarios < respDb.length; iHorarios++) {
       const horario = respDb[iHorarios];
       for (
@@ -78,8 +78,8 @@ export class ChartsService {
   }
 
   async getCountXMonthContract(contract: mar_ctr_contratos) {
-    var date = new Date();
-    var months = [];
+    let date = new Date();
+    let months = [];
     for (let index = 1; index <= 12; index++) {
       const startDate = new Date(date.getFullYear(), index - 1, 1, 1, 0, 0);
       const ultimoDia = new Date(date.getFullYear(), index, 0, 23, 59, 59, 999); 
@@ -107,9 +107,9 @@ export class ChartsService {
           },
         },
       });
-      var inLate = 0;
-      var onTime = 0;
-      var total = 0;
+      let inLate = 0;
+      let onTime = 0;
+      let total = 0;
       for (let iHorarios = 0; iHorarios < respDb.length; iHorarios++) {
         const horario = respDb[iHorarios];
         for (
@@ -129,13 +129,13 @@ export class ChartsService {
           }
         }
       }
-      var month = startDate.toLocaleString('es-ES', { month: 'long' });
+      let month = startDate.toLocaleString('es-ES', { month: 'long' });
       months.push({ inLate, onTime, total, month, index });
     }
     return months;
   }
   async getCountHourExtrContract(contract: mar_ctr_contratos) {
-    var date = new Date();
+    let date = new Date();
     const startDate = new Date(
       date.getFullYear(),
       date.getMonth() - 1,
@@ -152,7 +152,7 @@ export class ChartsService {
       59,
       59,
     );
-    var respDb = await this.prisma.mar_hor_horarios.findMany({
+    let respDb = await this.prisma.mar_hor_horarios.findMany({
       where: {
         hor_estado: 'ACTIVE',
         hor_codctro: contract.ctr_codigo,
@@ -176,7 +176,7 @@ export class ChartsService {
         },
       },
     });
-    var extraHours = 0;
+    let extraHours = 0;
     for (let iHorarios = 0; iHorarios < respDb.length; iHorarios++) {
       const horario = respDb[iHorarios];
       for (

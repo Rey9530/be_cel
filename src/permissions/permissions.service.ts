@@ -13,7 +13,7 @@ export class PermissionsService {
     createPermissionDto: CreatePermissionDto,
     user: mar_usr_usuario,
   ) {
-    var asignacion = await this.prisma.mar_asi_asignacion.findFirst({
+    let asignacion = await this.prisma.mar_asi_asignacion.findFirst({
       where: {
         asi_codemp: createPermissionDto.per_codemp,
         asi_estado: 'ACTIVE',
@@ -28,7 +28,7 @@ export class PermissionsService {
       );
     }
 
-    var employee = await this.prisma.mar_emp_empleados.findFirst({
+    let employee = await this.prisma.mar_emp_empleados.findFirst({
       where: {
         emp_codigo: createPermissionDto.per_codemp_reemplazo,
         emp_estado: 'ACTIVE',
@@ -41,9 +41,9 @@ export class PermissionsService {
       );
     }
     try {
-      var per_fecha_inicio = convert_date(createPermissionDto.per_fecha_inicio);
-      var per_fecha_fin = convert_date(createPermissionDto.per_fecha_fin);
-      var data: any = {
+      let per_fecha_inicio = convert_date(createPermissionDto.per_fecha_inicio);
+      let per_fecha_fin = convert_date(createPermissionDto.per_fecha_fin);
+      let data: any = {
         per_codasi: asignacion.asi_codigo,
         per_codemp: asignacion.asi_codemp,
         per_codemp_reemplazo: createPermissionDto.per_codemp_reemplazo,
@@ -54,7 +54,7 @@ export class PermissionsService {
         per_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
         per_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
       };
-      var resp = await this.prisma.mar_per_permisos.create({
+      let resp = await this.prisma.mar_per_permisos.create({
         data,
       });
       return resp;

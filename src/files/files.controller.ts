@@ -39,7 +39,7 @@ export class FilesController {
       storage: diskStorage({
         destination: UPLOADFILE,
         filename: (_, file, cb) => {
-          var splitName = file.originalname.split(".");
+          let splitName = file.originalname.split(".");
           cb(null, new Date().getTime() + `.${splitName[1]}`);
         },
       }),
@@ -78,7 +78,7 @@ export class FilesController {
       storage: diskStorage({
         destination: './uploads_temp',
         filename: (_, file, cb) => {
-          var splitName = file.originalname.split(".");
+          let splitName = file.originalname.split(".");
           cb(null, new Date().getTime() + `.${splitName[1]}`);
         },
       }),

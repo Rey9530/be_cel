@@ -22,11 +22,11 @@ export class EmployesService {
     createEmployeDto: CreateEmployeDto,
     user: mar_usr_usuario,
   ): Promise<any> {
-    var emp_fecha_nacimiento = convert_date(
+    let emp_fecha_nacimiento = convert_date(
       createEmployeDto.emp_fecha_nacimiento,
     );
-    var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
-    var data: any = {
+    let usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
+    let data: any = {
       emp_codgen: createEmployeDto.marca_emp_gen,
       emp_codubi: createEmployeDto.marca_emp_ubi,
       emp_codcon: createEmployeDto.marca_emp_cn,
@@ -42,15 +42,15 @@ export class EmployesService {
       emp_apellidos: createEmployeDto.emp_apellidos,
     };
     try {
-      var employe = await this.prisma.mar_emp_empleados.create({ data });
+      let employe = await this.prisma.mar_emp_empleados.create({ data });
 
       if (
         createEmployeDto.marca_asig_proy &&
         isUUID(createEmployeDto.marca_asig_proy) &&
         isUUID(createEmployeDto.marca_asig_hour)
       ) {
-        //TODO: Agregar validacion para verificar si existe el horarrio
-        var contract: any = {
+        //HACER: Agregar validacion para verificar si existe el horarrio
+        let contract: any = {
           asi_usrcrea: usuariosName,
           asi_usrmod: usuariosName,
           asi_codemp: employe.emp_codigo,
@@ -124,10 +124,10 @@ export class EmployesService {
 
   async findAll(codeEmploye: PaginationDto) {
     try {
-      var or_ = {};
+      let or_ = {};
       if (codeEmploye.query.length > 3) {
-        var arrayWhere = [];
-        var arrayWords = codeEmploye.query.split(' ');
+        let arrayWhere = [];
+        let arrayWords = codeEmploye.query.split(' ');
         arrayWords.forEach((contains) => {
           if (contains.length > 0) {
             arrayWhere.push({
@@ -152,13 +152,13 @@ export class EmployesService {
         });
         or_ = { OR: arrayWhere };
       }
-      var wCompany = {};
+      let wCompany = {};
       if (isUUID(codeEmploye.company)) {
         wCompany = { emp_codemp: codeEmploye.company };
       }
-      var where: any = { ...wCompany, emp_estado: 'ACTIVE', ...or_ };
+      let where: any = { ...wCompany, emp_estado: 'ACTIVE', ...or_ };
 
-      var employes = await this.prisma.mar_emp_empleados.findMany({
+      let employes = await this.prisma.mar_emp_empleados.findMany({
         where,
         orderBy: { emp_nombres: 'asc' },
         include: {
@@ -185,14 +185,14 @@ export class EmployesService {
     }
   }
   async generateCode(codeEmploye: CodeEmployeDto) {
-    var dateArray = codeEmploye.emp_fecha_nacimiento.split('/');
-    var year = dateArray[2].toString();
-    var precode = year[2] + year[3] + dateArray[1];
+    let dateArray = codeEmploye.emp_fecha_nacimiento.split('/');
+    let year = dateArray[2].toString();
+    let precode = year[2] + year[3] + dateArray[1];
 
-    var respDb = await this.prisma.mar_emp_empleados.findMany({
+    let respDb = await this.prisma.mar_emp_empleados.findMany({
       where: { emp_estado: 'ACTIVE', emp_codigo: { contains: precode } },
     });
-    var code =
+    let code =
       precode.toString() +
       (respDb.length + 1).toString().padStart(3, '0').toString();
 
@@ -200,7 +200,7 @@ export class EmployesService {
   }
 
   async findOne(id: string) {
-    var respDb = await this.prisma.mar_emp_empleados.findFirst({
+    let respDb = await this.prisma.mar_emp_empleados.findFirst({
       where: { emp_estado: 'ACTIVE', emp_codigo: id },
       include: {
         mar_gen_generos: true,
@@ -228,12 +228,12 @@ export class EmployesService {
     updateEmployeDto: UpdateEmployeDto,
     user: mar_usr_usuario,
   ) {
-    var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
+    let usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
     await this.findOne(id);
-    var emp_fecha_nacimiento = convert_date(
+    let emp_fecha_nacimiento = convert_date(
       updateEmployeDto.emp_fecha_nacimiento,
     );
-    var data: any = {
+    let data: any = {
       emp_codgen: updateEmployeDto.marca_emp_gen,
       emp_codubi: updateEmployeDto.marca_emp_ubi,
       emp_codcon: updateEmployeDto.marca_emp_cn,

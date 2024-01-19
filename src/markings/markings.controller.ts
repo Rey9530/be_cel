@@ -52,7 +52,7 @@ export class MarkingsController {
     @Query() filterDTO: FilterDTO,
     @Res() res: Response,
   ) {
-    var buffer: any = await this.markingsService.excelAllMarkings(id, filterDTO);
+    let buffer: any = await this.markingsService.excelAllMarkings(id, filterDTO);
     const filename = 'report.xlsx';
 
     res.setHeader('Content-Disposition', `attachment; filename=${filename}`);

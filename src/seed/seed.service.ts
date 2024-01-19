@@ -22,7 +22,7 @@ export class SeedService {
   async executeSeed() {
     try {
       await this.deleteSeed();
-      var cremod = 'Creado por el seeder'; 
+      let cremod = 'Creado por el seeder'; 
       await this.prisma.mar_mop_motivo_per.createMany({
         data: [
           {
@@ -107,7 +107,7 @@ export class SeedService {
           },
         ],
       });
-      var gender = await this.prisma.mar_gen_generos.create({
+      let gender = await this.prisma.mar_gen_generos.create({
         data: {
           gen_nombre: 'Masculino',
           gen_usrcrea: cremod,
@@ -170,7 +170,7 @@ export class SeedService {
         ],
       });
 
-      var ubicacion1 = await this.prisma.mar_ubi_ubicaciones.create({
+      let ubicacion1 = await this.prisma.mar_ubi_ubicaciones.create({
         data: {
           ubi_nombre: 'Central',
           ubi_usrcrea: cremod,
@@ -186,7 +186,7 @@ export class SeedService {
         },
       });
 
-      var contrataciones1 = await this.prisma.mar_con_contrataciones.create({
+      let contrataciones1 = await this.prisma.mar_con_contrataciones.create({
         data: {
           con_nombre: 'Fijo',
           con_usrcrea: cremod,
@@ -208,7 +208,7 @@ export class SeedService {
         },
       });
 
-      var usuario = await this.prisma.mar_usr_usuario.create({
+      let usuario = await this.prisma.mar_usr_usuario.create({
         data: {
           usr_codigo_emple: '9505002',
           usr_nombres: 'Usuario',
@@ -219,7 +219,7 @@ export class SeedService {
         },
       });
 
-      var empresa = await this.prisma.mar_epr_empresas.create({
+      let empresa = await this.prisma.mar_epr_empresas.create({
         data: {
           epr_nombre: 'Empresa 1',
           epr_direccion: 'San Salvador',
@@ -231,7 +231,7 @@ export class SeedService {
         },
       });
 
-      var empleado = await this.prisma.mar_emp_empleados.create({
+      let empleado = await this.prisma.mar_emp_empleados.create({
         data: {
           emp_codigo_emp: 'T-8502001',
           emp_fecha_nacimiento: new Date(),

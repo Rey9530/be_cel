@@ -1,5 +1,5 @@
 export function convert_date(fecha: string, time: TimeType = TimeType.None) {
-  var dateParts = fecha.split('/');
+  let dateParts = fecha.split('/');
   if (dateParts.length != 3) {
     return new Date();
   }

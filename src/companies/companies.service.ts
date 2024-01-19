@@ -16,7 +16,7 @@ export class CompaniesService {
   async create(createCompanyDto: CreateCompanyDto, user: mar_usr_usuario) {
     try {
       const userFullName = user.usr_nombres + ' ' + user.usr_apellidos;
-      var data: any = {
+      let data: any = {
         // epr_codusr: user.usr_codigo,
         epr_nombre: createCompanyDto.empre_nombre,
         epr_direccion: createCompanyDto.empre_direccion,
@@ -58,7 +58,7 @@ export class CompaniesService {
     await this.findOne(id);
     try {
       const userFullName = user.usr_nombres + ' ' + user.usr_apellidos;
-      var data: any = { 
+      let data: any = { 
         // epr_codusr: user.usr_codigo,
         epr_nombre: updateCompanyDto.empre_nombre,
         epr_direccion: updateCompanyDto.empre_direccion,
