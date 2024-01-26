@@ -65,7 +65,15 @@ export class PermissionsService {
   }
 
   async findAll() {
-    return `This action returns all permissions`;
+    return await this.prisma.mar_per_permisos.findMany({
+      where: {
+        per_estado: 'ACTIVE', 
+      },
+      include: {
+        mar_emp_empleado_reemplazo: true,
+        mar_mop_motivo_per: true,
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -77,6 +85,15 @@ export class PermissionsService {
       include: {
         mar_emp_empleado_reemplazo: true,
         mar_mop_motivo_per: true,
+      },
+    });
+  }
+
+
+  async getReasons( ) {
+    return await this.prisma.mar_mop_motivo_per.findMany({
+      where: {
+        mop_estado: 'ACTIVE',
       },
     });
   }

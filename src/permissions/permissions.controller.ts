@@ -40,6 +40,11 @@ export class PermissionsController {
     return this.permissionsService.findOne(id);
   }
 
+  @Get('get/reasons')
+  getReasons() {
+    return this.permissionsService.getReasons( );
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,
